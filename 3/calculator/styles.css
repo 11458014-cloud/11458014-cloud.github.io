@@ -1,0 +1,382 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.container {
+    width: 100%;
+    max-width: 500px;
+}
+
+.calculator {
+    background: #2d2d2d;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    padding: 20px;
+    color: white;
+}
+
+/* Display Section */
+.display-section {
+    background: #1a1a1a;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.display {
+    width: 100%;
+    background: #0a0a0a;
+    color: #00ff00;
+    border: 2px solid #444;
+    border-radius: 8px;
+    padding: 15px;
+    font-size: 28px;
+    text-align: right;
+    font-family: 'Courier New', monospace;
+    margin-bottom: 10px;
+}
+
+.display:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.history-label {
+    font-size: 12px;
+    color: #888;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+}
+
+.history-list {
+    max-height: 80px;
+    overflow-y: auto;
+    background: #0a0a0a;
+    border-radius: 5px;
+    padding: 8px;
+}
+
+.history-item {
+    font-size: 12px;
+    color: #00dd00;
+    padding: 4px;
+    border-bottom: 1px solid #333;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.history-item:hover {
+    background: #1a1a1a;
+}
+
+.history-item:last-child {
+    border-bottom: none;
+}
+
+/* Mode Selector */
+.mode-selector {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 15px;
+    overflow-x: auto;
+    padding-bottom: 5px;
+}
+
+.mode-btn {
+    background: #404040;
+    border: 2px solid #666;
+    color: #ccc;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    white-space: nowrap;
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+
+.mode-btn:hover {
+    background: #505050;
+    border-color: #888;
+}
+
+.mode-btn.active {
+    background: #667eea;
+    border-color: #667eea;
+    color: white;
+}
+
+/* Buttons Grid */
+.button-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-top: 15px;
+}
+
+.btn {
+    padding: 15px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: #404040;
+    color: white;
+}
+
+.btn:hover {
+    background: #505050;
+    transform: translateY(-2px);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+.operator-btn {
+    background: #667eea;
+    color: white;
+}
+
+.operator-btn:hover {
+    background: #7c8ff0;
+}
+
+.function-btn {
+    background: #764ba2;
+    color: white;
+    font-size: 14px;
+}
+
+.function-btn:hover {
+    background: #8b5ba5;
+}
+
+.equals-btn {
+    background: #00cc44;
+    color: white;
+    font-weight: bold;
+}
+
+.equals-btn:hover {
+    background: #00dd55;
+}
+
+/* Complex Mode Styles */
+.complex-input {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.input-group label {
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+}
+
+.input-group input {
+    background: #1a1a1a;
+    border: 2px solid #444;
+    color: #00ff00;
+    padding: 8px;
+    border-radius: 6px;
+    font-family: 'Courier New', monospace;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+/* Matrix Mode Styles */
+.matrix-controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.size-control {
+    display: flex;
+    flex-direction: column;
+}
+
+.size-control label {
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 5px;
+}
+
+.size-control select {
+    background: #1a1a1a;
+    border: 2px solid #444;
+    color: #00ff00;
+    padding: 8px;
+    border-radius: 6px;
+}
+
+.matrix-input {
+    background: #1a1a1a;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.matrix-row {
+    display: grid;
+    gap: 5px;
+    margin-bottom: 5px;
+}
+
+.matrix-input input {
+    background: #0a0a0a;
+    border: 1px solid #444;
+    color: #00ff00;
+    padding: 8px;
+    border-radius: 4px;
+    width: 100%;
+    font-family: 'Courier New', monospace;
+    text-align: center;
+}
+
+.matrix-input input:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.matrix-ops {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+/* Units Mode Styles */
+.units-controls {
+    display: grid;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.unit-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.unit-group label {
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+}
+
+.unit-group select,
+.unit-group input {
+    background: #1a1a1a;
+    border: 2px solid #444;
+    color: #00ff00;
+    padding: 8px;
+    border-radius: 6px;
+    font-family: 'Courier New', monospace;
+}
+
+.unit-group select:focus,
+.unit-group input:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+#convert-btn {
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+/* Result Box */
+.result-box {
+    background: #0a0a0a;
+    border: 2px solid #667eea;
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 15px;
+    color: #00ff00;
+    font-family: 'Courier New', monospace;
+    font-size: 16px;
+    min-height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+/* Mode Content */
+.mode-content {
+    display: none;
+}
+
+.mode-content.active {
+    display: block;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: #1a1a1a;
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #667eea;
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #7c8ff0;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .calculator {
+        padding: 15px;
+    }
+
+    .button-grid {
+        gap: 6px;
+    }
+
+    .btn {
+        padding: 12px;
+        font-size: 14px;
+    }
+
+    .display {
+        font-size: 24px;
+    }
+
+    .matrix-controls {
+        grid-template-columns: 1fr;
+    }
+}

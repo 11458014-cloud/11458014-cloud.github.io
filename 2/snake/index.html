@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>貪吃蛇遊戲</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- 主界面 -->
+        <div id="main-screen" class="screen active">
+            <div class="title-section">
+                <h1 class="title">🐍 貪吃蛇</h1>
+                <p class="subtitle">經典無限模式遊戲</p>
+            </div>
+
+            <div class="stats-display">
+                <div class="stat-item">
+                    <span class="stat-label">最高分</span>
+                    <span class="stat-value" id="main-highscore">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">總局數</span>
+                    <span class="stat-value" id="games-played">0</span>
+                </div>
+            </div>
+
+            <div class="menu-buttons">
+                <button class="btn btn-primary" id="start-btn">開始遊戲</button>
+                <button class="btn btn-secondary" id="leaderboard-btn">排行榜</button>
+                <button class="btn btn-secondary" id="settings-btn">設置</button>
+                <button class="btn btn-secondary" id="about-btn">關於</button>
+            </div>
+        </div>
+
+        <!-- 遊戲界面 -->
+        <div id="game-screen" class="screen">
+            <div class="game-header">
+                <div class="game-info">
+                    <div class="score-display">
+                        <span class="label">分數</span>
+                        <span class="value" id="score">0</span>
+                    </div>
+                    <div class="level-display">
+                        <span class="label">速度</span>
+                        <span class="value" id="level">Lv.1</span>
+                    </div>
+                    <div class="food-display">
+                        <span class="label">道具</span>
+                        <span class="value" id="items-count">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-canvas-wrapper">
+                <canvas id="gameCanvas" width="400" height="400"></canvas>
+                <div id="game-overlay" class="game-overlay">
+                    <div class="overlay-content">
+                        <h2>暫停中</h2>
+                        <p>按空白鍵繼續遊戲</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-controls">
+                <div class="control-buttons">
+                    <button class="btn btn-control" id="pause-btn">⏸ 暫停</button>
+                    <button class="btn btn-control" id="resume-btn">▶ 繼續</button>
+                    <button class="btn btn-control" id="exit-btn">🏠 主菜單</button>
+                </div>
+                <div class="controls-hint">
+                    <p>⬆️ ⬇️ ⬅️ ➡️ 或 WASD 控制方向</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 遊戲結束界面 -->
+        <div id="game-over-screen" class="screen">
+            <div class="game-over-content">
+                <h1 class="game-over-title">遊戲結束</h1>
+                <div class="final-stats">
+                    <div class="stat-row">
+                        <span class="stat-name">最終分數</span>
+                        <span class="stat-value" id="final-score">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-name">蛇長度</span>
+                        <span class="stat-value" id="final-length">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-name">生存時間</span>
+                        <span class="stat-value" id="survive-time">0s</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-name">速度等級</span>
+                        <span class="stat-value" id="final-level">Lv.1</span>
+                    </div>
+                </div>
+
+                <div id="new-record" class="new-record hidden">
+                    🏆 新紀錄！🏆
+                </div>
+
+                <div class="game-over-buttons">
+                    <button class="btn btn-primary" id="restart-btn">再來一局</button>
+                    <button class="btn btn-secondary" id="menu-btn">返回主菜單</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 排行榜界面 -->
+        <div id="leaderboard-screen" class="screen">
+            <div class="leaderboard-content">
+                <h1 class="leaderboard-title">🏆 排行榜</h1>
+                <div class="leaderboard-table">
+                    <div class="leaderboard-header">
+                        <div class="rank">排名</div>
+                        <div class="name">名字</div>
+                        <div class="score">分數</div>
+                        <div class="date">日期</div>
+                    </div>
+                    <div id="leaderboard-list" class="leaderboard-list">
+                        <!-- 動態加載 -->
+                    </div>
+                </div>
+                <button class="btn btn-secondary" id="leaderboard-back-btn">返回</button>
+            </div>
+        </div>
+
+        <!-- 設置界面 -->
+        <div id="settings-screen" class="screen">
+            <div class="settings-content">
+                <h1 class="settings-title">⚙️ 設置</h1>
+
+                <div class="settings-group">
+                    <label class="setting-item">
+                        <span class="setting-label">皮膚選擇</span>
+                        <select id="skin-selector" class="setting-select">
+                            <option value="classic">經典（綠色）</option>
+                            <option value="blue">藍色</option>
+                            <option value="purple">紫色</option>
+                            <option value="red">紅色</option>
+                            <option value="gold">金色</option>
+                            <option value="neon">霓虹</option>
+                        </select>
+                    </label>
+
+                    <label class="setting-item">
+                        <span class="setting-label">音效</span>
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="sound-toggle" class="toggle-checkbox" checked>
+                            <span class="toggle-slider"></span>
+                        </div>
+                    </label>
+
+                    <label class="setting-item">
+                        <span class="setting-label">難度等級</span>
+                        <select id="difficulty-selector" class="setting-select">
+                            <option value="easy">簡單（初速度：80ms）</option>
+                            <option value="normal">標準（初速度：60ms）</option>
+                            <option value="hard">困難（初速度：40ms）</option>
+                            <option value="extreme">極限（初速度：30ms）</option>
+                        </select>
+                    </label>
+
+                    <label class="setting-item">
+                        <span class="setting-label">道具開關</span>
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="items-toggle" class="toggle-checkbox" checked>
+                            <span class="toggle-slider"></span>
+                        </div>
+                    </label>
+
+                    <label class="setting-item">
+                        <span class="setting-label">玩家名字</span>
+                        <input type="text" id="player-name" class="setting-input" placeholder="輸入你的名字..." maxlength="20">
+                    </label>
+                </div>
+
+                <div class="settings-buttons">
+                    <button class="btn btn-primary" id="save-settings-btn">保存設置</button>
+                    <button class="btn btn-secondary" id="clear-data-btn">清除所有數據</button>
+                    <button class="btn btn-secondary" id="settings-back-btn">返回</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 關於界面 -->
+        <div id="about-screen" class="screen">
+            <div class="about-content">
+                <h1 class="about-title">🐍 關於遊戲</h1>
+                
+                <div class="about-text">
+                    <h2>遊戲規則</h2>
+                    <ul>
+                        <li>移動蛇吃掉出現的食物</li>
+                        <li>每吃到一個食物，蛇身體變長</li>
+                        <li>撞到牆壁或蛇身體，遊戲結束</li>
+                        <li>隨著分數增加，蛇移動速度會加快</li>
+                        <li>收集金色道具以獲得加速度、無敵等特殊效果</li>
+                    </ul>
+
+                    <h2>道具說明</h2>
+                    <ul>
+                        <li>🍎 紅色食物：+10 分</li>
+                        <li>⭐ 黃色星星：+50 分，暫時加速</li>
+                        <li>🛡️ 藍色護盾：臨時無敵 5 秒</li>
+                        <li>🔥 紅色火焰：暫時加速</li>
+                    </ul>
+
+                    <h2>計分系統</h2>
+                    <ul>
+                        <li>普通食物：+10 分</li>
+                        <li>星形道具：+50 分</li>
+                        <li>護盾道具：+0 分（特殊效果）</li>
+                        <li>火焰加速：+0 分（特殊效果）</li>
+                        <li>難度係數：隨著速度等級提升而增加分數</li>
+                    </ul>
+                </div>
+
+                <button class="btn btn-secondary" id="about-back-btn">返回</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
