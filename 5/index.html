@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>貪吃蛇 - 陳稟均</title>
+
+<style>
+body {
+    margin: 0;
+    text-align: center;
+    background: #111;
+    color: white;
+    font-family: Arial;
+}
+
+canvas {
+    background: black;
+    display: block;
+    margin: 10px auto;
+    border: 2px solid #0f0;
+}
+
+.controls button {
+    width: 60px;
+    height: 60px;
+    margin: 5px;
+    font-size: 20px;
+    border-radius: 10px;
+    border: none;
+    background: #333;
+    color: white;
+}
+</style>
+
+</head>
+
+<body>
+
+<h2>🐍 貪吃蛇</h2>
+<p>創作者：陳稟均</p>
+
+<canvas id="game" tabindex="0"></canvas>
+
+<div class="controls">
+    <div><button onclick="setDir(0,-1)">⬆️</button></div>
+    <div>
+        <button onclick="setDir(-1,0)">⬅️</button>
+        <button onclick="setDir(1,0)">➡️</button>
+    </div>
+    <div><button onclick="setDir(0,1)">⬇️</button></div>
+</div>
+
+<script>
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+
+// 自適應畫面
+function resize() {
+    let size = Math.min(window.innerWidth, window.innerHeight) - 150;
+    canvas.width = size;
+    canvas.height = size;
+}
+resize();
+window.addEventListener("resize", resize);
+
+// 點擊取得焦點（讓鍵盤可用）
+canvas.addEventListener("click", () => canvas.focus());
+
+// 防止方向鍵滾動畫面
+window.addEventListener("keydown", e => {
+    if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].includes(e.key)) {
+        e.preventDefault();
+    }
+});
+
+// 音效
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+function beep(freq) {
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+
+    osc.frequency.value = freq;
+    osc.start();
+    gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.2);
+    osc.stop(audioCtx.currentTime + 0.2);
+}
+
+// 遊戲設定
+const grid = 20;
+let count = 0;
+
+let snake = {
+    x: 80,
+    y: 80,
+    dx: grid,
+    dy: 0,
+    cells: [],
+    maxCells: 4
+};
+
+let apple = {
+    x: 200,
+    y: 200
+};
+
+function randomPos() {
+    let max = canvas.width / grid;
+    return Math.floor(Math.random() * max) * grid;
+}
+
+// 主迴圈
+function loop() {
+    requestAnimationFrame(loop);
+
+    if (++count < 5) return;
+    count = 0;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    snake.x += snake.dx;
+    snake.y += snake.dy;
+
+    // 穿牆
+    if (snake.x < 0) snake.x = canvas.width - grid;
+    if (snake.y < 0) snake.y = canvas.height - grid;
+    if (snake.x >= canvas.width) snake.x = 0;
+    if (snake.y >= canvas.height) snake.y = 0;
+
+    snake.cells.unshift({x: snake.x, y: snake.y});
+    if (snake.cells.length > snake.maxCells) snake.cells.pop();
+
+    // 畫蘋果
+    ctx.fillStyle = "red";
+    ctx.fillRect(apple.x, apple.y, grid-2, grid-2);
+
+    // 畫蛇
+    ctx.fillStyle = "lime";
+    snake.cells.forEach((cell, index) => {
+
+        ctx.fillRect(cell.x, cell.y, grid-2, grid-2);
+
+        // 吃到蘋果
+        if (cell.x === apple.x && cell.y === apple.y) {
+            snake.maxCells++;
+            apple.x = randomPos();
+            apple.y = randomPos();
+            beep(600);
+        }
+
+        // 撞自己
+        for (let i = index + 1; i < snake.cells.length; i++) {
+            if (cell.x === snake.cells[i].x && cell.y === snake.cells[i].y) {
+                beep(200);
+                snake.x = 80;
+                snake.y = 80;
+                snake.cells = [];
+                snake.maxCells = 4;
+                snake.dx = grid;
+                snake.dy = 0;
+            }
+        }
+    });
+}
+
+// 鍵盤控制（修正版）
+document.addEventListener("keydown", e => {
+    switch(e.key) {
+        case "ArrowLeft":
+            if (snake.dx === 0) setDir(-1, 0);
+            break;
+        case "ArrowUp":
+            if (snake.dy === 0) setDir(0, -1);
+            break;
+        case "ArrowRight":
+            if (snake.dx === 0) setDir(1, 0);
+            break;
+        case "ArrowDown":
+            if (snake.dy === 0) setDir(0, 1);
+            break;
+    }
+});
+
+// 控制方向（手機+鍵盤共用）
+function setDir(x, y) {
+    if (x !== 0 && snake.dx === 0) {
+        snake.dx = x * grid;
+        snake.dy = 0;
+    }
+    if (y !== 0 && snake.dy === 0) {
+        snake.dy = y * grid;
+        snake.dx = 0;
+    }
+}
+
+requestAnimationFrame(loop);
+</script>
+
+</body>
+</html>
