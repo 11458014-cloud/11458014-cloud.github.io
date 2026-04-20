@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<title>打地鼠遊戲</title>
+<style>
+  body {
+    text-align: center;
+    font-family: Arial, sans-serif;
+    background: #f0f8ff;
+  }
+  h1 {
+    margin-top: 20px;
+  }
+  #game {
+    display: grid;
+    grid-template-columns: repeat(3, 120px);
+    gap: 15px;
+    justify-content: center;
+    margin-top: 30px;
+  }
+  .hole {
+    width: 120px;
+    height: 120px;
+    background: #8B4513;
+    border-radius: 50%;
+    position: relative;
+    cursor: pointer;
+  }
+  .mole {
+    width: 80px;
+    height: 80px;
+    background: #333;
+    border-radius: 50%;
+    position: absolute;
+    bottom: 10px;
+    left: 20px;
+    display: none;
+  }
+  #score {
+    font-size: 24px;
+    margin-top: 20px;
+  }
+  #creator {
+    margin-top: 30px;
+    font-size: 16px;
+    color: #555;
+  }
+  button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+  }
+</style>
+</head>
+<body>
+
+<h1>打地鼠遊戲 🐹</h1>
+<div id="score">分數: 0</div>
+<button onclick="startGame()">開始遊戲</button>
+
+<div id="game"></div>
+
+<div id="creator">創建者：陳稟均</div>
+
+<script>
+  const game = document.getElementById("game");
+  const scoreDisplay = document.getElementById("score");
+
+  let score = 0;
+  let currentMole = null;
+  let gameInterval = null;
+
+  // 建立洞
+  for (let i = 0; i < 9; i++) {
+    const hole = document.createElement("div");
+    hole.classList.add("hole");
+
+    const mole = document.createElement("div");
+    mole.classList.add("mole");
+
+    hole.appendChild(mole);
+
+    hole.addEventListener("click", () => {
+      if (mole === currentMole) {
+        score++;
+        scoreDisplay.textContent = "分數: " + score;
+        mole.style.display = "none";
+        currentMole = null;
+      }
+    });
+
+    game.appendChild(hole);
+  }
+
+  function randomMole() {
+    const moles = document.querySelectorAll(".mole");
+    moles.forEach(m => m.style.display = "none");
+
+    const index = Math.floor(Math.random() * moles.length);
+    currentMole = moles[index];
+    currentMole.style.display = "block";
+  }
+
+  function startGame() {
+    score = 0;
+    scoreDisplay.textContent = "分數: 0";
+
+    if (gameInterval) clearInterval(gameInterval);
+
+    gameInterval = setInterval(randomMole, 800);
+
+    // 10秒後結束
+    setTimeout(() => {
+      clearInterval(gameInterval);
+      alert("遊戲結束！你的分數是: " + score);
+    }, 10000);
+  }
+</script>
+
+</body>
+</html>
