@@ -61,3 +61,12 @@ canvas {
 .instructions strong {
   color: #ffd166;
 }
+
+.author {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  color: var(--text);
+  font-size: 1rem;
+  font-weight: bold;
+}
