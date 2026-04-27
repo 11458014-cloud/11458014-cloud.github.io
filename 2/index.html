@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>打地鼠</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="game-shell">
+    <div class="author">作者名稱: 陳稟均</div>
+    <header>
+      <h1>打地鼠</h1>
+      <div class="status-bar">
+        <div>分數: <span id="score">0</span></div>
+        <div>時間: <span id="time">30</span> s</div>
+      </div>
+    </header>
+
+    <div class="controls">
+      <button id="startBtn">開始遊戲</button>
+      <button id="resetBtn">重置</button>
+    </div>
+
+    <div class="grid" id="grid"></div>
+    <div class="notice" id="notice">點擊地鼠增加分數！</div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

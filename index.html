@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>我的作品集</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <header class="site-header">
+      <div class="brand">作品集</div>
+      <nav class="site-nav">
+        <a href="#about">關於我</a>
+        <a href="#projects">作品</a>
+        <a href="#contact">聯絡</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">自我介紹</p>
+          <h1>我是陳稟均</h1>
+          <p>我是一名熱愛前端設計與互動開發的創作者，專注於製作清晰、易用且美觀的網頁體驗。</p>
+          <div class="hero-actions">
+            <a class="btn primary" href="#projects">查看作品</a>
+            <a class="btn secondary" href="#contact">聯繫我</a>
+          </div>
+        </div>
+        <div class="hero-visual">
+          <div class="feature-card">
+            <h2>作品集</h2>
+            <p>這裡展示應用程式、遊戲與設計專案。</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="about" class="section about-section">
+        <div class="section-heading">
+          <span>01</span>
+          <h2>關於我</h2>
+        </div>
+        <div class="about-grid">
+          <div>
+            <p>我喜歡用簡潔的排版、溫暖的色彩與流暢的互動，打造能留住使用者的介面。擅長 HTML、CSS、JavaScript，並且持續學習新的前端技術。</p>
+          </div>
+          <div class="about-list">
+            <div><strong>專長：</strong>響應式網頁、動態介面、遊戲互動</div>
+            <div><strong>工具：</strong>VS Code、Figma、Chrome DevTools</div>
+            <div><strong>喜歡：</strong>動畫設計、使用者體驗、程式遊戲</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="projects" class="section projects-section">
+        <div class="section-heading">
+          <span>02</span>
+          <h2>近期作品</h2>
+        </div>
+        <div class="project-grid">
+          <article class="project-card">
+            <p class="project-tag">網頁遊戲</p>
+            <h3>貪吃蛇遊戲</h3>
+            <p>經典貪吃蛇遊戲，支援鍵盤控制與分數計算，適合手機與桌面瀏覽。</p>
+          </article>
+          <article class="project-card">
+            <p class="project-tag">互動應用</p>
+            <h3>打地鼠遊戲</h3>
+            <p>簡單且好玩的打地鼠遊戲，包含時間倒數與分數統計。</p>
+          </article>
+          <article class="project-card">
+            <p class="project-tag">計算工具</p>
+            <h3>工程計算機</h3>
+            <p>多功能計算機，支援基本、科學、複數與矩陣運算，介面清楚易用。</p>
+          </article>
+          <article class="project-card">
+            <p class="project-tag">作品集網站</p>
+            <h3>個人展示頁</h3>
+            <p>完整作品集頁面，包含作品說明、專長區塊與聯絡方式。</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="contact" class="section contact-section">
+        <div class="section-heading">
+          <span>03</span>
+          <h2>聯絡方式</h2>
+        </div>
+        <div class="contact-card">
+          <p>歡迎透過下列方式聯繫我，一起討論合作或專案想法。</p>
+          <ul>
+            <li>電子郵件：<a href="mailto:example@example.com">example@example.com</a></li>
+            <li>GitHub：<a href="https://github.com" target="_blank" rel="noreferrer">github.com/你的帳號</a></li>
+          </ul>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>&copy; <span id="year"></span> 作品集</p>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
