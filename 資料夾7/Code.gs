@@ -2,7 +2,7 @@
 // 連接試算表：https://docs.google.com/spreadsheets/d/169b8NtWtT2oJnLRkam-p21sBIGrScyEpfzGVwsUeT2M/edit?usp=sharing
 
 const SPREADSHEET_ID = '169b8NtWtT2oJnLRkam-p21sBIGrScyEpfzGVwsUeT2M';
-const SHEET_NAME = '單字'; // 根據實際情況修改工作表名稱
+const SHEET_NAME = '工作表1'; // 根據實際情況修改工作表名稱
 
 // 全局變數
 let vocabularyData = [];
