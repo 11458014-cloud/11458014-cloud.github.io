@@ -6,7 +6,7 @@
 
 📋 **必要資訊：**
 - Sheet ID: `169b8NtWtT2oJnLRkam-p21sBIGrScyEpfzGVwsUeT2M`
-- 工作表名稱: 記下你要使用的工作表名稱（預設為 "單字"）
+- 工作表名稱: 記下你要使用的工作表名稱（預設為 "工作表1"）
 
 ## 第 2 步：在 Google Sheet 中部署 Apps Script
 
@@ -25,7 +25,7 @@
 // 第 3-4 行，修改以下兩個變數
 
 const SPREADSHEET_ID = '169b8NtWtT2oJnLRkam-p21sBIGrScyEpfzGVwsUeT2M';
-const SHEET_NAME = '單字';  // ← 修改為你的工作表名稱
+const SHEET_NAME = '工作表1';  // ← 修改為你的工作表名稱
 ```
 
 ## 第 4 步：建立 HTML 文件
@@ -43,8 +43,6 @@ const SHEET_NAME = '單字';  // ← 修改為你的工作表名稱
 2. 點擊 **選擇函式** 下拉菜單，選擇 `testConnection`
 3. 點擊執行按鈕 (播放按鈕)
 4. 點擊 **查看執行記錄** 檢查是否成功讀取單字
-
-![執行記錄](execution-log.png)
 
 如果看到 "取得單字數：" 後面有數字，表示連接成功！
 

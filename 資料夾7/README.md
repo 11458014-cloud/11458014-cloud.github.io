@@ -39,7 +39,7 @@
 
 ```javascript
 const SPREADSHEET_ID = '169b8NtWtT2oJnLRkam-p21sBIGrScyEpfzGVwsUeT2M';
-const SHEET_NAME = '單字';  // 修改為你的工作表名稱
+const SHEET_NAME = '工作表1';  // 修改為你的工作表名稱
 ```
 
 你的試算表格式應該為：
