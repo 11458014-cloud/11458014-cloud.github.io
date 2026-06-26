@@ -1,0 +1,614 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ntfy 聊天對話窗</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #111827;
+      --panel-2: #1f2937;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --line: rgba(255,255,255,.10);
+      --accent: #38bdf8;
+      --accent-2: #0ea5e9;
+      --danger: #f87171;
+      --ok: #34d399;
+      --bubble-self: #0ea5e9;
+      --bubble-other: #374151;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(56,189,248,.18), transparent 34%),
+        radial-gradient(circle at bottom right, rgba(14,165,233,.12), transparent 30%),
+        var(--bg);
+      color: var(--text);
+      display: grid;
+      place-items: center;
+      padding: 18px;
+    }
+
+    .app {
+      width: min(960px, 100%);
+      height: min(760px, calc(100vh - 36px));
+      background: rgba(17,24,39,.92);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 24px 80px rgba(0,0,0,.35);
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+    }
+
+    header {
+      padding: 18px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(15,23,42,.72);
+    }
+
+    .title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      font-size: 20px;
+      margin: 0;
+      letter-spacing: .04em;
+    }
+
+    .designer {
+      margin-top: 6px;
+      color: var(--accent);
+      font-size: 14px;
+      letter-spacing: .04em;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: var(--danger);
+      box-shadow: 0 0 0 4px rgba(248,113,113,.10);
+    }
+
+    .dot.on {
+      background: var(--ok);
+      box-shadow: 0 0 0 4px rgba(52,211,153,.12);
+    }
+
+    .settings {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr auto auto;
+      gap: 10px;
+    }
+
+    label {
+      display: grid;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    input, button, textarea {
+      font: inherit;
+    }
+
+    input, textarea {
+      width: 100%;
+      color: var(--text);
+      background: var(--panel-2);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      outline: none;
+      padding: 12px 14px;
+    }
+
+    input:focus, textarea:focus {
+      border-color: rgba(56,189,248,.65);
+      box-shadow: 0 0 0 4px rgba(56,189,248,.10);
+    }
+
+    button {
+      border: 0;
+      border-radius: 14px;
+      padding: 12px 16px;
+      color: white;
+      background: var(--accent-2);
+      cursor: pointer;
+      transition: transform .12s ease, opacity .12s ease;
+      align-self: end;
+      min-height: 46px;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+    }
+
+    button:disabled {
+      cursor: not-allowed;
+      opacity: .55;
+      transform: none;
+    }
+
+    button.secondary {
+      background: #334155;
+    }
+
+    main {
+      min-height: 0;
+      overflow: auto;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      scroll-behavior: smooth;
+    }
+
+    .notice {
+      align-self: center;
+      color: var(--muted);
+      background: rgba(255,255,255,.06);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 13px;
+      max-width: 100%;
+      text-align: center;
+    }
+
+    .message {
+      max-width: min(78%, 620px);
+      display: grid;
+      gap: 4px;
+    }
+
+    .message.self {
+      margin-left: auto;
+      justify-items: end;
+    }
+
+    .meta {
+      color: var(--muted);
+      font-size: 12px;
+      padding: 0 4px;
+    }
+
+    .bubble {
+      padding: 12px 14px;
+      border-radius: 18px;
+      line-height: 1.55;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      border: 1px solid rgba(255,255,255,.08);
+      background: var(--bubble-other);
+    }
+
+    .self .bubble {
+      background: linear-gradient(135deg, var(--bubble-self), var(--accent));
+      color: #082f49;
+      border-color: transparent;
+    }
+
+    .notification-bubble {
+      background: #fff7ed;
+      color: #431407;
+      border-color: rgba(251, 146, 60, .22);
+      box-shadow: 0 10px 28px rgba(0,0,0,.12);
+    }
+
+    .notification-title {
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .notification-body {
+      margin-bottom: 8px;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    .notification-meta {
+      color: rgba(67, 20, 7, .66);
+      font-size: 13px;
+    }
+
+    footer {
+      padding: 14px;
+      border-top: 1px solid var(--line);
+      background: rgba(15,23,42,.78);
+    }
+
+    .composer {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: end;
+    }
+
+    textarea {
+      resize: none;
+      min-height: 52px;
+      max-height: 130px;
+    }
+
+    .help {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 8px;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 720px) {
+      body {
+        padding: 0;
+      }
+
+      .app {
+        height: 100vh;
+        border-radius: 0;
+      }
+
+      .title-row {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .settings {
+        grid-template-columns: 1fr;
+      }
+
+      button {
+        width: 100%;
+      }
+
+      .message {
+        max-width: 88%;
+      }
+
+      .composer {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div class="title-row">
+        <div>
+          <h1>ntfy 聊天對話窗</h1>
+          <div class="designer">設計者：郭冠廷</div>
+        </div>
+        <div class="status" title="連線狀態">
+          <span id="statusDot" class="dot"></span>
+          <span id="statusText">尚未連線</span>
+        </div>
+      </div>
+
+      <div class="settings">
+        <label>
+          Topic 頻道名稱
+          <input id="topicInput" value="drher" maxlength="64" autocomplete="off" />
+        </label>
+
+        <label>
+          暱稱
+          <input id="nameInput" value="訪客" maxlength="24" autocomplete="off" />
+        </label>
+
+        <button id="connectBtn" type="button">連線</button>
+        <button id="clearBtn" class="secondary" type="button">清除畫面</button>
+      </div>
+    </header>
+
+    <main id="messages">
+      <div class="notice">請輸入或確認 Topic，按「連線」後即可收發訊息。預設 Topic：drher。</div>
+    </main>
+
+    <footer>
+      <div class="composer">
+        <textarea id="messageInput" placeholder="輸入訊息，按 Enter 送出；Shift + Enter 換行" disabled></textarea>
+        <button id="sendBtn" type="button" disabled>送出</button>
+      </div>
+      <div class="help">
+        使用標準 HTTPS：發送到 https://ntfy.sh/{Topic}，接收來自 https://ntfy.sh/{Topic}/sse。送出內容為「暱稱：訊息」純文字格式；送出後右邊顯示自己的訊息，左邊會再顯示一次對面收到的通知卡片。
+        注意：公開 ntfy.sh 的 Topic 不是私人聊天室，請不要傳送密碼或個資。
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    const BASE_URL = "https://ntfy.sh";
+    const DEFAULT_TOPIC = "drher";
+
+    const topicInput = document.getElementById("topicInput");
+    const nameInput = document.getElementById("nameInput");
+    const connectBtn = document.getElementById("connectBtn");
+    const clearBtn = document.getElementById("clearBtn");
+    const messages = document.getElementById("messages");
+    const messageInput = document.getElementById("messageInput");
+    const sendBtn = document.getElementById("sendBtn");
+    const statusDot = document.getElementById("statusDot");
+    const statusText = document.getElementById("statusText");
+
+    let eventSource = null;
+    let currentTopic = "";
+    let clientId = localStorage.getItem("ntfy_chat_client_id");
+
+    if (!clientId) {
+      clientId = crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random();
+      localStorage.setItem("ntfy_chat_client_id", clientId);
+    }
+
+    topicInput.value = localStorage.getItem("ntfy_chat_topic") || DEFAULT_TOPIC;
+    nameInput.value = localStorage.getItem("ntfy_chat_name") || "訪客";
+
+    function safeTopic(value) {
+      return value.trim().replace(/^\/+|\/+$/g, "");
+    }
+
+    function setConnected(isConnected, text) {
+      statusDot.classList.toggle("on", isConnected);
+      statusText.textContent = text;
+      messageInput.disabled = !isConnected;
+      sendBtn.disabled = !isConnected;
+      connectBtn.textContent = isConnected ? "重新連線" : "連線";
+    }
+
+    function addNotice(text) {
+      const div = document.createElement("div");
+      div.className = "notice";
+      div.textContent = text;
+      messages.appendChild(div);
+      scrollToBottom();
+    }
+
+    function formatTime(unixSeconds) {
+      const date = unixSeconds ? new Date(unixSeconds * 1000) : new Date();
+      return date.toLocaleTimeString("zh-TW", { hour: "2-digit", minute: "2-digit" });
+    }
+
+    function addMessage({ text, name, time, self }) {
+      const wrap = document.createElement("div");
+      wrap.className = "message" + (self ? " self" : "");
+
+      const meta = document.createElement("div");
+      meta.className = "meta";
+      meta.textContent = `${name || "匿名"} · ${formatTime(time)}`;
+
+      const bubble = document.createElement("div");
+      bubble.className = "bubble";
+      bubble.textContent = text;
+
+      wrap.append(meta, bubble);
+      messages.appendChild(wrap);
+      scrollToBottom();
+    }
+
+    function addNotificationEcho({ text, topic, time }) {
+      const wrap = document.createElement("div");
+      wrap.className = "message";
+
+      const bubble = document.createElement("div");
+      bubble.className = "bubble notification-bubble";
+
+      const title = document.createElement("div");
+      title.className = "notification-title";
+      title.textContent = "聊天對話窗新訊息";
+
+      const body = document.createElement("div");
+      body.className = "notification-body";
+      body.textContent = text;
+
+      const meta = document.createElement("div");
+      meta.className = "notification-meta";
+      meta.textContent = `${topic || currentTopic || "ntfy"} · ${formatTime(time)}`;
+
+      bubble.append(title, body, meta);
+      wrap.appendChild(bubble);
+      messages.appendChild(wrap);
+      scrollToBottom();
+    }
+
+    function scrollToBottom() {
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    function parsePayload(messageText) {
+      // 支援三種格式：
+      // 1. 本頁面送出的純文字：暱稱：訊息
+      // 2. 舊版 JSON：{ type:"chat", text:"...", name:"..." }
+      // 3. 其他程式常見 JSON：{ message:"...", nickname:"..." }
+      try {
+        const data = JSON.parse(messageText);
+
+        if (data && data.type === "chat" && typeof data.text === "string") {
+          return {
+            text: data.text,
+            name: data.name || data.nickname || "匿名",
+            clientId: data.clientId || ""
+          };
+        }
+
+        if (data && typeof data.message === "string") {
+          return {
+            text: data.message,
+            name: data.nickname || data.name || data.sender || "匿名",
+            clientId: data.clientId || ""
+          };
+        }
+      } catch (_) {}
+
+      const divider = messageText.indexOf("：");
+      if (divider > 0) {
+        return {
+          text: messageText.slice(divider + 1).trim(),
+          name: messageText.slice(0, divider).trim() || "匿名",
+          clientId: ""
+        };
+      }
+
+      return {
+        text: messageText,
+        name: "ntfy",
+        clientId: ""
+      };
+    }
+
+    function connect() {
+      const topic = safeTopic(topicInput.value || DEFAULT_TOPIC);
+      const name = nameInput.value.trim() || "訪客";
+
+      if (!topic) {
+        addNotice("Topic 不可空白。");
+        return;
+      }
+
+      localStorage.setItem("ntfy_chat_topic", topic);
+      localStorage.setItem("ntfy_chat_name", name);
+
+      if (eventSource) {
+        eventSource.close();
+      }
+
+      currentTopic = topic;
+      messages.innerHTML = "";
+      addNotice(`正在連線到 Topic：${topic}`);
+
+      const url = `${BASE_URL}/${encodeURIComponent(topic)}/sse`;
+      eventSource = new EventSource(url);
+
+      eventSource.addEventListener("open", () => {
+        setConnected(true, `已連線：${topic}`);
+        addNotice("連線完成。其他使用相同 Topic 的人可以看到訊息。");
+      });
+
+      eventSource.addEventListener("error", () => {
+        setConnected(false, "連線中斷，瀏覽器會嘗試重連");
+      });
+
+      eventSource.onmessage = (event) => {
+        const ntfyData = JSON.parse(event.data);
+
+        if (ntfyData.event !== "message") return;
+
+        const rawText = ntfyData.message || "";
+        const chat = parsePayload(rawText);
+
+        // 本頁面送出時會先在右邊顯示一次。
+        // ntfy SSE 回傳同一則訊息時，再用通知卡片形式顯示在左邊，讓自己也看得到對面收到的重複訊息。
+        const ownPlainText = `${nameInput.value.trim() || "訪客"}：${chat.text}`;
+        const isOwnPlainText = rawText === ownPlainText;
+
+        if (isOwnPlainText) {
+          addNotificationEcho({
+            text: rawText,
+            topic: currentTopic,
+            time: ntfyData.time
+          });
+          return;
+        }
+
+        addMessage({
+          text: chat.text,
+          name: chat.name || "匿名",
+          time: ntfyData.time,
+          self: false
+        });
+      };
+    }
+
+    async function sendMessage() {
+      const text = messageInput.value.trim();
+      const name = nameInput.value.trim() || "訪客";
+
+      if (!text || !currentTopic) return;
+
+      // 送到 ntfy 的內容改成純文字，其他人用 ntfy 網頁或 APP 看也會很簡潔。
+      // 範例：何帥：YYY
+      // 注意：不要把中文暱稱放進 HTTP Header，例如 Title: 郭冠廷。
+      // 瀏覽器的 fetch 會因為 Header 含中文而出現 non ISO-8859-1 code point 錯誤。
+      const payload = `${name}：${text}`;
+
+      sendBtn.disabled = true;
+
+      try {
+        const response = await fetch(`${BASE_URL}/${encodeURIComponent(currentTopic)}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "text/plain; charset=utf-8"
+          },
+          body: payload
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+
+        // 立刻在自己的畫面重覆顯示一次自己送出的文字，不用等待 SSE 回傳。
+        addMessage({
+          text,
+          name,
+          time: Math.floor(Date.now() / 1000),
+          self: true
+        });
+
+        messageInput.value = "";
+        messageInput.style.height = "";
+      } catch (error) {
+        addNotice(`送出失敗：${error.message}`);
+      } finally {
+        sendBtn.disabled = false;
+        messageInput.focus();
+      }
+    }
+
+    connectBtn.addEventListener("click", connect);
+    sendBtn.addEventListener("click", sendMessage);
+
+    clearBtn.addEventListener("click", () => {
+      messages.innerHTML = "";
+      addNotice("畫面已清除。這不會刪除 ntfy 伺服器快取。");
+    });
+
+    messageInput.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        sendMessage();
+      }
+    });
+
+    messageInput.addEventListener("input", () => {
+      messageInput.style.height = "auto";
+      messageInput.style.height = Math.min(messageInput.scrollHeight, 130) + "px";
+    });
+
+    window.addEventListener("beforeunload", () => {
+      if (eventSource) eventSource.close();
+    });
+  </script>
+</body>
+</html>
